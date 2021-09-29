@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -52,18 +54,55 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+
+
+    // lifecycle
+    def lifecycle_version = "2.3.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+     // compose
+    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha10"
+
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.0-alpha06'
+    implementation   "androidx.compose.foundation:foundation:${compose_version}"
+    implementation  "androidx.compose.foundation:foundation-layout:${compose_version}"
+    implementation  "androidx.compose.ui:ui-util:${compose_version}"
+    implementation  "androidx.compose.runtime:runtime:${compose_version}"
+    implementation  "androidx.compose.material:material:${compose_version}"
+    implementation  "androidx.compose.animation:animation:${compose_version}"
+    implementation  "androidx.compose.ui:ui-tooling:${compose_version}"
+
+    // accompanist
+    def accompanist_version = "0.18.0"
+    implementation    "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation    "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation    "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
 
+    // coroutines
+    def coroutine_version = "1.5.2"
+   implementation  "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+   implementation  "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+     // hilt
+    def hilt_version = "2.38.1"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    def hilt_viewmodels = "1.0.0"
+    kapt "androidx.hilt:hilt-compiler:$hilt_viewmodels"
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
 
 
-
-
-
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
