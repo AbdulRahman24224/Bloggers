@@ -32,7 +32,7 @@ abstract class BaseViewModel<S : BaseState>(
     val liveData: LiveData<S>
         get() = _state.asLiveData()
 
-     val  statesList: MutableList<S> = mutableListOf()
+     private val  statesList: MutableList<S> = mutableListOf()
 
     fun <T> Flow<T>.runAndCatch( loadingChanged: SendSingleItemListener<Boolean> , flowResult: SendSingleItemListener<T> ) {
         val flow = this
@@ -52,7 +52,6 @@ abstract class BaseViewModel<S : BaseState>(
         }
     }
 
-
     protected suspend fun setState(reducer: S.() -> S) {
 
             stateMutex.withLock {
@@ -63,9 +62,7 @@ abstract class BaseViewModel<S : BaseState>(
 
     }
 
-
     override fun onCleared() {
-
         super.onCleared()
     }
 }
