@@ -1,4 +1,4 @@
-package com.example.bloggers.ui.theme
+package com.example.bloggers.base.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
