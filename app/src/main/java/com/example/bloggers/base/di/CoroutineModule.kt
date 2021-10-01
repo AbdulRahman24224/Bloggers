@@ -16,6 +16,7 @@ annotation class UnconfinedDispatcher
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class DefaultDispatcher
+
 @Module
 @InstallIn(SingletonComponent::class)
 object CoroutineModule {

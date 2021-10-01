@@ -41,7 +41,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.5.21'
+        kotlinCompilerVersion '1.5.30'
     }
     packagingOptions {
         resources {
@@ -64,33 +64,35 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
-     // compose
+    // compose
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha10"
 
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation   "androidx.compose.foundation:foundation:${compose_version}"
-    implementation  "androidx.compose.foundation:foundation-layout:${compose_version}"
-    implementation  "androidx.compose.ui:ui-util:${compose_version}"
-    implementation  "androidx.compose.runtime:runtime:${compose_version}"
-    implementation  "androidx.compose.material:material:${compose_version}"
-    implementation  "androidx.compose.animation:animation:${compose_version}"
-    implementation  "androidx.compose.ui:ui-tooling:${compose_version}"
+    implementation "androidx.compose.foundation:foundation:${compose_version}"
+    implementation "androidx.compose.foundation:foundation-layout:${compose_version}"
+    implementation "androidx.compose.ui:ui-util:${compose_version}"
+    implementation "androidx.compose.runtime:runtime:${compose_version}"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "androidx.compose.material:material:${compose_version}"
+    implementation "androidx.compose.animation:animation:${compose_version}"
+    implementation "androidx.compose.ui:ui-tooling:${compose_version}"
 
     // accompanist
     def accompanist_version = "0.18.0"
-    implementation    "com.google.accompanist:accompanist-insets:$accompanist_version"
-    implementation    "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
-    implementation    "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
+    implementation "io.coil-kt:coil-compose:1.3.0"
 
     // coroutines
     def coroutine_version = "1.5.2"
-   implementation  "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
-   implementation  "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-     // hilt
+    // hilt
     def hilt_version = "2.38.1"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
@@ -99,7 +101,6 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:$hilt_viewmodels"
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
 
-
     // Networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -107,6 +108,11 @@ dependencies {
     implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
         exclude group: 'org.json', module: 'json'
     }
+
+    // database
+    def room_version = "2.3.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

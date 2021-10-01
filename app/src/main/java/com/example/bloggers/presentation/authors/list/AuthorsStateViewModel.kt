@@ -18,13 +18,12 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class AuthorsStateViewModel
-
 @Inject constructor(
     private val authorsRepository: AuthorsRepository,
-    @DefaultDispatcher private  val dispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher
 
 ) : BaseViewModel<AuthorsListState>(
-    AuthorsListState() ,
+    AuthorsListState(),
     dispatcher
 ) {
 
@@ -37,11 +36,13 @@ class AuthorsStateViewModel
         }
     }
 
+
     private suspend fun handleIntents() {
 
-        pendingActions.collect { action ->
+        pendingActions
+            .collect { action ->
             when (action) {
-              is  AuthorsListIntents.RetrieveAuthors -> authorsRepository.getAuthors(action.page)
+                is AuthorsListIntents.RetrieveAuthors -> getAuthors(action.page , action.isConnected)
             }
         }
     }
@@ -52,29 +53,39 @@ class AuthorsStateViewModel
         }
     }
 
-/*    private fun  setCurrentArticle(article : Article){
-        viewModelScope.launch {
-            setState { copy(article = article) }
-            getArticlefor(article.url)
-        }
-    }*/
-    private fun getAuthors(page : Int) {
-        authorsRepository.getAuthors(page)
-            .runAndCatch( SendSingleItemListener { b->   viewModelScope.launch { setState { copy(isLoading = b) }} } ,
+    /*    private fun  setCurrentArticle(article : Article){
+            viewModelScope.launch {
+                setState { copy(article = article) }
+                getArticlefor(article.url)
+            }
+        }*/
+    private fun getAuthors(page: Int , isConnected : Boolean) {
+        authorsRepository.getAuthors(page  , isConnected )
+            .runAndCatch(SendSingleItemListener { b ->
+                viewModelScope.launch {
+                    setState {
+                        copy(
+                            isLoading = b
+                        )
+                    }
+                }
+            },
                 SendSingleItemListener
-            { str ->
-                viewModelScope.launch {  setState {
-                    copy(authors =
-                    state.authors.let {
-                        it.addAll(str.authors)
-                        it }) }}
+                { newState ->
+                    viewModelScope.launch {
+                        setState {
+                            copy( hasMoreData = newState.authors.isNotEmpty()
+                             ,   authors =
+                            state.authors.let {
+                                it.addAll(newState.authors)
+                                it
+                            })
+                        }
+                    }
 
 
-
-            })
+                })
     }
-
-
 
 
 }

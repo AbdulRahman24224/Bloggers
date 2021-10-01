@@ -26,7 +26,7 @@ abstract class CallDelegate<TIn, TOut>(
 
 class ResultCall<T>(proxy: Call<T>) : CallDelegate<T, Result<T>>(proxy) {
 
-    override fun enqueueImpl(callback: Callback<Result<T>>) = proxy.enqueue(object: Callback<T> {
+    override fun enqueueImpl(callback: Callback<Result<T>>) = proxy.enqueue(object : Callback<T> {
 
         override fun onResponse(call: Call<T>, response: Response<T>) {
             val code = response.code()
@@ -60,7 +60,7 @@ class ResultCall<T>(proxy: Call<T>) : CallDelegate<T, Result<T>>(proxy) {
 
 class ResultAdapter(
     private val type: Type
-): CallAdapter<Type, Call<Result<Type>>> {
+) : CallAdapter<Type, Call<Result<Type>>> {
     override fun responseType() = type
     override fun adapt(call: Call<Type>): Call<Result<Type>> = ResultCall(call)
 }

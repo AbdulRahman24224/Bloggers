@@ -1,6 +1,6 @@
 package com.example.bloggers.base.di
 
-import com.example.bloggers.domain.data.AuthorsApis
+import com.example.bloggers.domain.data.remote.AuthorsApis
 import com.example.bloggers.domain.repository.AuthorsRepository
 import dagger.Module
 import dagger.Provides
@@ -16,7 +16,8 @@ object RepositoryModule {
     @Provides
     fun provideArticlesRepository(
         articleApi: AuthorsApis,
+        database: AppDatabase,
     ): AuthorsRepository {
-        return AuthorsRepository(articleApi )
+        return AuthorsRepository(articleApi , database)
     }
 }

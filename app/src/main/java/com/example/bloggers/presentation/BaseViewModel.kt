@@ -1,4 +1,3 @@
-
 package com.example.bloggers.presentation
 
 import androidx.lifecycle.LiveData
@@ -18,23 +17,26 @@ class SendSingleItemListener<T>(val item: (item: T) -> Unit) {
 }
 
 abstract class BaseViewModel<S : BaseState>(
-    initialState: S  ,
+    initialState: S,
     val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(initialState)
     private val stateMutex = Mutex()
 
-    val  state: S
-    get() = _state.value
+    val state: S
+        get() = _state.value
 
     // todo :  expose state as StateFlow
     val liveData: LiveData<S>
         get() = _state.asLiveData()
 
-     private val  statesList: MutableList<S> = mutableListOf()
+    private val statesList: MutableList<S> = mutableListOf()
 
-    fun <T> Flow<T>.runAndCatch( loadingChanged: SendSingleItemListener<Boolean> , flowResult: SendSingleItemListener<T> ) {
+    fun <T> Flow<T>.runAndCatch(
+        loadingChanged: SendSingleItemListener<Boolean>,
+        flowResult: SendSingleItemListener<T>
+    ) {
         val flow = this
         viewModelScope.launch(defaultDispatcher) {
 
@@ -42,7 +44,7 @@ abstract class BaseViewModel<S : BaseState>(
 
             flow
                 .flowOn(defaultDispatcher)
-                .catch { e -> setState {  this.apply { error = e.message?:"Exception Error" }} }
+                .catch { e -> setState { this.apply {  error = e.message ?: "Exception Error" } } }
                 .collect { it ->
                     flowResult.sendItem(it)
                     loadingChanged.sendItem(false)
@@ -54,11 +56,11 @@ abstract class BaseViewModel<S : BaseState>(
 
     protected suspend fun setState(reducer: S.() -> S) {
 
-            stateMutex.withLock {
-                _state.value = reducer(_state.value)
+        stateMutex.withLock {
+            _state.value = reducer(_state.value)
             //    Log.v("newState", state.value.toString())
-                statesList.add(_state.value)
-            }
+            statesList.add(_state.value)
+        }
 
     }
 

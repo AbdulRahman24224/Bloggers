@@ -1,10 +1,12 @@
 package com.example.bloggers.base.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.example.bloggers.presentation.authors.list.ui.AuthorsListScreen
 
 
+@ExperimentalFoundationApi
 fun NavGraphBuilder.AppNavGraph(
     onSnackSelected: (Long, NavBackStackEntry) -> Unit,
     upPress: () -> Unit

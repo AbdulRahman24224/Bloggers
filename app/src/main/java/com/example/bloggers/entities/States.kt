@@ -10,7 +10,7 @@ abstract class BaseState {
 
 @Parcelize
 data class AuthorsListState(
-    val isIdle: Boolean = true,
+    val hasMoreData: Boolean = true,
     val authors: MutableList<Author> = mutableListOf(),
     var status: String = "true",
     var page: Int = 1,
