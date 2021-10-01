@@ -5,14 +5,16 @@ import kotlinx.parcelize.Parcelize
 
 abstract class BaseState {
     abstract var isLoading: Boolean
-    abstract var error : String
+    abstract var error: String
 }
 
 @Parcelize
-data class AuthorsListState (val isIdle :Boolean = true,
-                             val authors: MutableList<Author> = mutableListOf(),
-                             var status: String ="true",
-                             override var error: String ="",
-                             override var isLoading: Boolean= false
+data class AuthorsListState(
+    val isIdle: Boolean = true,
+    val authors: MutableList<Author> = mutableListOf(),
+    var status: String = "true",
+    var page: Int = 1,
+    override var error: String = "",
+    override var isLoading: Boolean = false
 
 ) : BaseState(), Parcelable
