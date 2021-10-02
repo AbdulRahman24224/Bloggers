@@ -3,12 +3,13 @@ package com.example.bloggers.base.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
+import com.example.bloggers.presentation.authors.details.AuthorProfile
 import com.example.bloggers.presentation.authors.list.ui.AuthorsListScreen
 
 
 @ExperimentalFoundationApi
 fun NavGraphBuilder.AppNavGraph(
-    onSnackSelected: (Long, NavBackStackEntry) -> Unit,
+    onAuthorSelected: (Long, NavBackStackEntry) -> Unit,
     upPress: () -> Unit
 ) {
     navigation(
@@ -16,9 +17,9 @@ fun NavGraphBuilder.AppNavGraph(
         startDestination = MainDestinations.AUTHOR_LIST_ROUTE
     ) {
         composable(MainDestinations.AUTHOR_LIST_ROUTE) {
-            AuthorsListScreen(onAuthorClick = {id ->
-
-            })
+            AuthorsListScreen(onAuthorClick = { id ->
+                onAuthorSelected.invoke(id , it)
+            } )
         }
     }
     composable(
@@ -26,8 +27,8 @@ fun NavGraphBuilder.AppNavGraph(
         arguments = listOf(navArgument(MainDestinations.AUTHOR_ID_KEY) { type = NavType.LongType })
     ) { backStackEntry ->
         val arguments = requireNotNull(backStackEntry.arguments)
-        val snackId = arguments.getLong(MainDestinations.AUTHOR_ID_KEY)
+        val authorId = arguments.getLong(MainDestinations.AUTHOR_ID_KEY)
 
-        // SnackDetail(snackId, upPress)
+      AuthorProfile(authorId = authorId, upPress = upPress)
     }
 }

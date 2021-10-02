@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 
 object AppTheme {
@@ -13,6 +14,14 @@ object AppTheme {
             DarkColors
         } else {
             LightColors
+        }
+
+    val gradient: List<Color>
+        @Composable
+        get() = if (isSystemInDarkTheme()) {
+            DarkGradient
+        } else {
+            LightGradient
         }
 }
 

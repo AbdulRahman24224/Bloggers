@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(innerPaddingModifier)
                         ) {
                             AppNavGraph(
-                                onSnackSelected = appStateHolder::navigateToAuthorDetails,
+                                onAuthorSelected = appStateHolder::navigateToAuthorDetails,
                                 upPress = appStateHolder::upPress
                             )
                         }

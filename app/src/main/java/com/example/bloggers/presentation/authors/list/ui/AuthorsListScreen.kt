@@ -48,13 +48,13 @@ import com.example.bloggers.domain.data.remote.Authors
 import com.example.bloggers.entities.Author
 import com.example.bloggers.entities.AuthorsListState
 import com.example.bloggers.presentation.authors.list.AuthorsListIntents
-import com.example.bloggers.presentation.authors.list.AuthorsStateViewModel
+import com.example.bloggers.presentation.authors.list.AuthorsListViewModel
 
 
 @ExperimentalFoundationApi
 @Composable
 fun AuthorsListScreen(
-    viewModel: AuthorsStateViewModel = hiltViewModel(),
+    viewModel: AuthorsListViewModel = hiltViewModel(),
     onAuthorClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {

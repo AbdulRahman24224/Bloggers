@@ -11,12 +11,12 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Author(
     @field:PrimaryKey
-    @SerializedName("id") val id: Int,
-    @SerializedName("name") val name: String,
-    @SerializedName("userName") val userName: String,
-    @SerializedName("email") val email: String,
-    @SerializedName("avatarUrl") val avatarUrl: String ,
-    var page: Int = 1
+    @SerializedName("id") val id: Int=0,
+    @SerializedName("name") val name: String="",
+    @SerializedName("userName") val userName: String="",
+    @SerializedName("email") val email: String="",
+    @SerializedName("avatarUrl") val avatarUrl: String="" ,
+    var page: Int= 1
 ) : Parcelable
 
 
@@ -24,12 +24,12 @@ data class Author(
 @Parcelize
 data class Post(
     @field:PrimaryKey
-    @SerializedName("id") val id: Int,
-    @SerializedName("authorId") val authorId: Int,
-    @SerializedName("date") val date: String,
-    @SerializedName("title") val title: String,
-    @SerializedName("body") val body: String,
-    @SerializedName("imageUrl") val imageUrl: String,
-
+    @SerializedName("id") val id: Int=0,
+    @SerializedName("authorId") val authorId: Int=0,
+    @SerializedName("date") val date: String="",
+    @SerializedName("title") val title: String="",
+    @SerializedName("body") val body: String="",
+    @SerializedName("imageUrl") val imageUrl: String="",
+    var page: Int= 1
     ) : Parcelable
 

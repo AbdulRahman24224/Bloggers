@@ -26,7 +26,7 @@ interface AuthorsApis {
 
 
     @GET("posts")
-    suspend fun getAuthors(
+    suspend fun getAuthorPosts(
         @Query("authorId") authorId: Int,
         @Query("_page") page: Int,
         @Query("limit") limit: Int = 20,

@@ -18,3 +18,15 @@ data class AuthorsListState(
     override var isLoading: Boolean = false
 
 ) : BaseState(), Parcelable
+
+@Parcelize
+data class AuthorsProfileState(
+    val hasMoreData: Boolean = true,
+    val author: Author = Author(),
+    val posts: MutableList<Post> = mutableListOf(),
+    var status: String = "true",
+    var page: Int = 1,
+    override var error: String = "",
+    override var isLoading: Boolean = false
+
+) : BaseState(), Parcelable

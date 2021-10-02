@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class AuthorsStateViewModel
+class AuthorsListViewModel
 @Inject constructor(
     private val authorsRepository: AuthorsRepository,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher
@@ -53,15 +53,10 @@ class AuthorsStateViewModel
         }
     }
 
-    /*    private fun  setCurrentArticle(article : Article){
-            viewModelScope.launch {
-                setState { copy(article = article) }
-                getArticlefor(article.url)
-            }
-        }*/
     private fun getAuthors(page: Int , isConnected : Boolean) {
         authorsRepository.getAuthors(page  , isConnected )
-            .runAndCatch(SendSingleItemListener { b ->
+            .runAndCatch(
+                SendSingleItemListener { b ->
                 viewModelScope.launch {
                     setState {
                         copy(

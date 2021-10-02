@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Bloggers</string>
     <string name="our_authors">Our Authors</string>
+    <string name="posts">Posts</string>
+    <string name="label_back">back</string>
 </resources>
