@@ -33,9 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-/**
- * Destinations used in the [JetauthorApp].
- */
+
 object MainDestinations {
     const val HOME_ROUTE = "home"
     const val AUTHOR_LIST_ROUTE = "home/authorsList"
@@ -58,9 +56,7 @@ fun rememberAppStateHolder(
         AppStateHolder(scaffoldState, navController, snackbarManager, resources, coroutineScope)
     }
 
-/**
- * Responsible for holding state related to [JetauthorApp] and containing UI-related logic.
- */
+
 @Stable
 class AppStateHolder(
     val scaffoldState: ScaffoldState,
@@ -69,7 +65,7 @@ class AppStateHolder(
     private val resources: Resources,
     coroutineScope: CoroutineScope
 ) {
-    // Process authorbars coming from authorbarManager
+
     init {
         coroutineScope.launch {
             snackbarManager.messages.collect { currentMessages ->

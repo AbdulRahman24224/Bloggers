@@ -16,28 +16,32 @@
 
 package com.example.bloggers.presentation.authors.details
 
+
+import android.content.Context
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,6 +50,7 @@ import com.example.bloggers.base.ui.components.*
 import com.example.bloggers.base.ui.theme.AppTheme
 import com.example.bloggers.base.ui.theme.Neutral8
 import com.example.bloggers.base.utils.network.ConnectivityUtil
+import com.example.bloggers.base.utils.ui.isScrolledToEnd
 import com.example.bloggers.base.utils.ui.sH
 import com.example.bloggers.entities.Author
 import com.example.bloggers.entities.AuthorsProfileState
@@ -83,9 +88,20 @@ fun AuthorProfile(
     Box(Modifier.fillMaxSize()) {
         val scroll = rememberScrollState(0)
         Header()
-        val posts = listOf<Post>(Post(title = "aaa") , Post(title = "bb") ,Post(title = "cc"))
-        Body( posts, scroll)
-        Title( viewState.author,scroll.value)
+        Body( viewState.posts, scroll ,
+            onRetrieveMore =
+            { context ->
+                if (viewState.isLoading.not() && viewState.hasMoreData)
+                    viewModel.submitAction(
+                        AuthorsProfileIntents.RetrieveAuthorPosts(
+                            ++viewState.page,
+                            ConnectivityUtil.isConnectionOn(context)
+                        )
+                    )
+                println(viewState.page)
+            }
+        )
+        Title(viewState.author, scroll.value)
         Image(viewState.author.avatarUrl, scroll.value)
         Up(upPress)
     }
@@ -125,7 +141,8 @@ private fun Up(upPress: () -> Unit) {
 @Composable
 private fun Body(
     posts: List<Post>,
-    scroll: ScrollState
+    scroll: ScrollState,
+    onRetrieveMore: (Context) -> Unit,
 ) {
     Column {
         Spacer(
@@ -135,7 +152,7 @@ private fun Body(
                 .height(MinTitleOffset)
         )
         Column(
-            modifier = Modifier.verticalScroll(scroll)
+
         ) {
             Spacer(Modifier.height(GradientScroll))
             AppSurface(Modifier.fillMaxWidth()) {
@@ -144,7 +161,6 @@ private fun Body(
                     Spacer(Modifier.height(TitleHeight))
 
                      sH(x = 16)
-
 
                     Text(
                         text = stringResource(R.string.posts),
@@ -156,18 +172,29 @@ private fun Body(
                    sH(x = 16)
                     AppDivider()
 
-                    posts.forEach { post ->
-                        key(post.id) {
+                    val listState = rememberLazyListState()
+                    // observer when reached end of list to invoke call to next page
 
-                         /*   LazyColumn(
-                                snackCollection = snackCollection,
-                                onSnackClick = { },
-                                highlight = false
-                            )*/
+                            LazyColumn(
+                                state = listState
+                            ) {
+
+                                itemsIndexed(posts) { index, post ->
+
+                                    if (index > 0) AppDivider()
+                                    PostItem(post , {
+                                        // todo post click shows comments
+                                    })
+
+                                }
+                            }
+
+                    val shouldLoadMore by remember {
+                        derivedStateOf {
+                            listState.isScrolledToEnd()
                         }
                     }
-
-
+                    if (shouldLoadMore) onRetrieveMore.invoke(LocalContext.current)
                 }
             }
         }
@@ -211,6 +238,65 @@ private fun Title(author: Author, scroll: Int) {
 
        sH(x = 8)
         AppDivider()
+    }
+}
+
+@Composable
+private fun PostItem(
+    post: Post,
+    onPostClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    AppCard(
+        modifier = modifier
+            .size(
+                width = 150.dp,
+                height = 280.dp
+            )
+            .padding( 8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .clickable(onClick = { onPostClick(post.id.toLong()) })
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(160.dp)
+                    .fillMaxWidth()
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                )
+                RoundImage(
+                    imageUrl = post.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            }
+            sH(x = 8)
+            Text(
+                text = post.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.h6,
+                color = AppTheme.colors.secondary,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            sH(x = 8)
+            Text(
+                text = post.body,
+                style = MaterialTheme.typography.body1,
+                color = AppTheme.colors.secondary,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
     }
 }
 

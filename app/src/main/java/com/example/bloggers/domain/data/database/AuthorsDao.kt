@@ -14,7 +14,7 @@ interface AuthorsDao {
     fun retrieveAuthorsByPage(pageNumber: Int): MutableList<Author>
 
     @Query("  select * from Author Where id = :authorId   ")
-    fun retrieveAuthorById(authorId: Int): MutableList<Author>
+   suspend fun retrieveAuthorById(authorId: Int): MutableList<Author>
 
     @Query("  select count(*) from Author ")
     fun retrieveAuthorsCount(): Int

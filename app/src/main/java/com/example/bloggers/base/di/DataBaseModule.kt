@@ -37,7 +37,7 @@ object DataBaseModule {
 }
 
 @Database(
-    entities = [Author::class , Post::class], version = 1, exportSchema = false
+    entities = [Author::class , Post::class], version = 2, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract val authorsDao: AuthorsDao

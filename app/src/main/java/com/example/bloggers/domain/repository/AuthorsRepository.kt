@@ -20,7 +20,7 @@ class AuthorsRepository
     fun getAuthors(page: Int, isConnected: Boolean): Flow<AuthorsListState> =
         flow<AuthorsListState> {
 
-            val isDBEmpty = database.authorsDao.retrieveAuthorsCount() == 0
+           val isDBEmpty = database.authorsDao.retrieveAuthorsCount() == 0
             //choosing source of data based on network state and cached data
             if (isConnected) retrieveFromServer(page)
             // todo think this condition
@@ -28,8 +28,8 @@ class AuthorsRepository
 
         }
 
-    fun getAuthorById(authorId: Int)
-       =   database.authorsDao.retrieveAuthorById(authorId )
+   suspend fun getAuthorById(authorId: Int)
+      =  database.authorsDao.retrieveAuthorById(authorId )
 
 
     private suspend fun FlowCollector<AuthorsListState>.retrieveFromServer(

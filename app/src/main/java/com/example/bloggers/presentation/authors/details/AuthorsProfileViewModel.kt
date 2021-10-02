@@ -27,8 +27,7 @@ class AuthorsProfileViewModel
     dispatcher
 ) {
 
-    private val pendingActions =
-        MutableSharedFlow<AuthorsProfileIntents>()
+    private val pendingActions = MutableSharedFlow<AuthorsProfileIntents>()
 
     init {
         viewModelScope.launch(defaultDispatcher) {
