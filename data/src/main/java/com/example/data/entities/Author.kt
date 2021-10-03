@@ -1,4 +1,4 @@
-package com.example.bloggers.entities
+package com.example.data.entities
 
 import android.os.Parcelable
 import androidx.room.Entity

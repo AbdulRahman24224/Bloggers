@@ -2,10 +2,10 @@ package com.example.bloggers.presentation.authors.list
 
 import androidx.lifecycle.viewModelScope
 import com.example.bloggers.base.di.DefaultDispatcher
-import com.example.bloggers.domain.repository.AuthorsRepository
-import com.example.bloggers.entities.AuthorsListState
 import com.example.bloggers.presentation.BaseViewModel
 import com.example.bloggers.presentation.SendSingleItemListener
+import com.example.domain.usecases.authors.RetrieveAuthorsUseCase
+import com.example.domain.usecases.authors.states.AuthorsListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthorsListViewModel
 @Inject constructor(
-    private val authorsRepository: AuthorsRepository,
+    private val retrieveAuthorsUseCase : RetrieveAuthorsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher
 
 ) : BaseViewModel<AuthorsListState>(
@@ -31,11 +31,8 @@ class AuthorsListViewModel
         MutableSharedFlow<AuthorsListIntents>()
 
     init {
-        viewModelScope.launch(defaultDispatcher) {
-            handleIntents()
-        }
+        viewModelScope.launch(defaultDispatcher) { handleIntents() }
     }
-
 
     private suspend fun handleIntents() {
 
@@ -54,7 +51,7 @@ class AuthorsListViewModel
     }
 
     private fun getAuthors(page: Int , isConnected : Boolean) {
-        authorsRepository.getAuthors(page  , isConnected )
+        retrieveAuthorsUseCase(page  , isConnected )
             .runAndCatch(
                 SendSingleItemListener { b ->
                 viewModelScope.launch {
@@ -77,9 +74,8 @@ class AuthorsListViewModel
                             })
                         }
                     }
-
-
-                })
+                }
+            )
     }
 
 

@@ -1,8 +1,8 @@
-package com.example.bloggers.base.di
+package com.example.data.di
 
 
 import com.example.bloggers.domain.data.MyCallAdapterFactory
-import com.example.bloggers.domain.data.remote.AuthorsApis
+import com.example.data.remote.AuthorsApis
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ihsanbal.logging.Level

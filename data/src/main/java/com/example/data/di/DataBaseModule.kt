@@ -1,12 +1,11 @@
-package com.example.bloggers.base.di
+package com.example.data.di
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.bloggers.domain.data.database.AuthorsDao
-import com.example.bloggers.entities.Author
-import com.example.bloggers.entities.Post
+import com.example.data.entities.Author
+import com.example.data.entities.Post
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +31,7 @@ object DataBaseModule {
 
     @Singleton
     @Provides
-    fun provideAuthorsDao(db: AppDatabase) :AuthorsDao= db.authorsDao
+    fun provideAuthorsDao(db: AppDatabase) : com.example.data.local.dao.AuthorsDao = db.authorsDao
 
 }
 
@@ -40,5 +39,5 @@ object DataBaseModule {
     entities = [Author::class , Post::class], version = 2, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract val authorsDao: AuthorsDao
+    abstract val authorsDao: com.example.data.local.dao.AuthorsDao
 }

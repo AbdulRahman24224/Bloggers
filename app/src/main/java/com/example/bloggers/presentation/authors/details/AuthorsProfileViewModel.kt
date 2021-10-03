@@ -2,10 +2,11 @@ package com.example.bloggers.presentation.authors.details
 
 import androidx.lifecycle.viewModelScope
 import com.example.bloggers.base.di.DefaultDispatcher
-import com.example.bloggers.domain.repository.AuthorsRepository
-import com.example.bloggers.entities.AuthorsProfileState
 import com.example.bloggers.presentation.BaseViewModel
 import com.example.bloggers.presentation.SendSingleItemListener
+import com.example.domain.usecases.authors.RetrieveAuthorPostsUseCase
+import com.example.domain.usecases.authors.RetrieveSingleAuthorUseCase
+import com.example.domain.usecases.authors.states.AuthorsProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthorsProfileViewModel
 @Inject constructor(
-    private val authorsRepository: AuthorsRepository,
+    private val retrieveAuthors : RetrieveAuthorPostsUseCase ,
+    private val retrieveSingleAuthor : RetrieveSingleAuthorUseCase ,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher
 
 ) : BaseViewModel<AuthorsProfileState>(
@@ -30,11 +32,8 @@ class AuthorsProfileViewModel
     private val pendingActions = MutableSharedFlow<AuthorsProfileIntents>()
 
     init {
-        viewModelScope.launch(defaultDispatcher) {
-            handleIntents()
-        }
+        viewModelScope.launch(defaultDispatcher) { handleIntents() }
     }
-
 
     private suspend fun handleIntents() {
 
@@ -55,15 +54,24 @@ class AuthorsProfileViewModel
 
         private fun  getCurrentAuthorData(authorId: Int , isConnected : Boolean){
             viewModelScope.launch {
-               val author =  authorsRepository.getAuthorById(authorId).firstOrNull()
-                author?.apply { setState { copy(author = author) }  }
+
+                    retrieveSingleAuthor(authorId)
+                        .runAndCatch(
+                            SendSingleItemListener {  } ,
+                            SendSingleItemListener {
+                              it?.apply { viewModelScope.launch {setState { copy(author = it) } } }
+                            }
+                        )
+
                 getAuthorPosts(authorId , 1 ,isConnected )
             }
         }
     
     private fun getAuthorPosts(authorId: Int , page: Int , isConnected : Boolean) {
-        authorsRepository.getAuthorPosts( authorId  , page  , isConnected )
-            .runAndCatch(SendSingleItemListener { b ->
+        retrieveAuthors(authorId  , page  , isConnected )
+            .runAndCatch(
+
+                SendSingleItemListener { b ->
                 viewModelScope.launch {
                     setState {
                         copy(
@@ -84,9 +92,8 @@ class AuthorsProfileViewModel
                             })
                         }
                     }
-
-
-                })
+                }
+            )
     }
 
 

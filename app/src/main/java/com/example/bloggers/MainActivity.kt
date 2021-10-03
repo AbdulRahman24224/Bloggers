@@ -52,8 +52,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             AppNavGraph(
                                 onAuthorSelected = appStateHolder::navigateToAuthorDetails,
-                                upPress = appStateHolder::upPress
-                            )
+                                upPress = appStateHolder::upPress )
                         }
                     }
 

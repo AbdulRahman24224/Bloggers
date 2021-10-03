@@ -44,11 +44,11 @@ import com.example.bloggers.base.ui.theme.AppTheme
 import com.example.bloggers.base.utils.network.ConnectivityUtil.isConnectionOn
 import com.example.bloggers.base.utils.ui.isScrolledToEnd
 import com.example.bloggers.base.utils.ui.sH
-import com.example.bloggers.domain.data.remote.Authors
-import com.example.bloggers.entities.Author
-import com.example.bloggers.entities.AuthorsListState
 import com.example.bloggers.presentation.authors.list.AuthorsListIntents
 import com.example.bloggers.presentation.authors.list.AuthorsListViewModel
+import com.example.data.entities.Author
+import com.example.data.remote.Authors
+import com.example.domain.usecases.authors.states.AuthorsListState
 
 
 @ExperimentalFoundationApi

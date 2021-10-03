@@ -52,9 +52,9 @@ import com.example.bloggers.base.ui.theme.Neutral8
 import com.example.bloggers.base.utils.network.ConnectivityUtil
 import com.example.bloggers.base.utils.ui.isScrolledToEnd
 import com.example.bloggers.base.utils.ui.sH
-import com.example.bloggers.entities.Author
-import com.example.bloggers.entities.AuthorsProfileState
-import com.example.bloggers.entities.Post
+import com.example.data.entities.Author
+import com.example.data.entities.Post
+import com.example.domain.usecases.authors.states.AuthorsProfileState
 import com.google.accompanist.insets.statusBarsPadding
 
 private val BottomBarHeight = 56.dp

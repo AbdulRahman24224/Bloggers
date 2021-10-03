@@ -1,10 +1,11 @@
 package com.example.bloggers.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.bloggers.entities.BaseState
+import com.example.data.entities.BaseState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -44,11 +45,11 @@ abstract class BaseViewModel<S : BaseState>(
 
             flow
                 .flowOn(defaultDispatcher)
-                .catch { e -> setState { this.apply {  error = e.message ?: "Exception Error" } } }
+                .catch { e -> setState { this.apply {  error = e.message ?: "Exception Error" } }
+                       Log.e("Error" , e.message ?: "Exception Error") }
                 .collect { it ->
                     flowResult.sendItem(it)
                     loadingChanged.sendItem(false)
-
                 }
 
         }

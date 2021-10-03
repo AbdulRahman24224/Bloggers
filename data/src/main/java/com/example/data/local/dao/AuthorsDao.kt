@@ -1,23 +1,23 @@
-package com.example.bloggers.domain.data.database
+package com.example.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.bloggers.entities.Author
-import com.example.bloggers.entities.Post
+import com.example.data.entities.Author
+import com.example.data.entities.Post
 
 @Dao
 interface AuthorsDao {
 
     @Query("  select * from Author Where page = :pageNumber   ")
-    fun retrieveAuthorsByPage(pageNumber: Int): MutableList<Author>
+   suspend fun retrieveAuthorsByPage(pageNumber: Int): MutableList<Author>
 
     @Query("  select * from Author Where id = :authorId   ")
    suspend fun retrieveAuthorById(authorId: Int): MutableList<Author>
 
     @Query("  select count(*) from Author ")
-    fun retrieveAuthorsCount(): Int
+    suspend fun retrieveAuthorsCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @JvmSuppressWildcards
@@ -26,14 +26,17 @@ interface AuthorsDao {
     // todo should this be in a separate dao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @JvmSuppressWildcards
-    fun insertAuthorPosts(authors: List<Post?>)
+   suspend fun insertAuthorPosts(authors: List<Post?>)
 
     @Query("  select * from Post Where page = :pageNumber  and authorId = :authorId  ")
-    fun retrieveAuthorPostsByPage(authorId: Int ,pageNumber: Int): MutableList<Post>
+    suspend fun retrieveAuthorPostsByPage(authorId: Int ,pageNumber: Int): MutableList<Post>
 
 
     @Query("DELETE FROM Author ")
-    fun clearAll()
+    suspend fun deleteAllAuthors()
+
+    @Query("DELETE FROM Post Where   authorId = :authorId")
+    suspend fun deleteAuthorPosts(authorId: Int)
 
 
 }
