@@ -8,5 +8,5 @@ sealed class AuthorsProfileIntents {
     data class RetrieveAuthorPosts(val page: Int, val isConnected: Boolean) :
         AuthorsProfileIntents()
 
-    object RefreshScreen: AuthorsProfileIntents()
+    data class RefreshScreen (val isConnected: Boolean): AuthorsProfileIntents()
 }

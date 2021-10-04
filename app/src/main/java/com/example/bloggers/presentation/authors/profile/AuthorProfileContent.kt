@@ -51,6 +51,7 @@ import com.example.bloggers.base.ui.theme.AppTheme
 import com.example.bloggers.base.utils.SnackbarManager
 import com.example.bloggers.base.utils.datetime.DateTimeUtil.getDateTime
 import com.example.bloggers.base.utils.network.ConnectivityUtil
+import com.example.bloggers.base.utils.network.ConnectivityUtil.isConnectionOn
 import com.example.bloggers.base.utils.resources.StringResourcesUtil
 import com.example.bloggers.base.utils.ui.isScrolledToEnd
 import com.example.bloggers.base.utils.ui.sP
@@ -119,8 +120,19 @@ fun AuthorProfileScreen(
                 Row() {
                     BackButton(modifier = Modifier.weight(1f)) { upPress.invoke() }
                     Spacer(modifier = Modifier.weight(4f))
-                    RefreshButton (modifier = Modifier.weight(1f)){ refreshFeedIfConnected(context, viewModel) }
+                    RefreshButton (modifier = Modifier.weight(1f)){
+
+                   viewModel.submitAction(
+                       AuthorsProfileIntents.RefreshScreen(isConnectionOn(context))) }
                 }
+
+                if (error.isNotEmpty()) {
+                    SnackbarManager.showMessage(
+                        StringResourcesUtil.getStringValueOrNull(LocalContext.current, error) ?: error
+                    )
+                    error = ""
+                }
+
             }
 
 
@@ -128,18 +140,6 @@ fun AuthorProfileScreen(
     }
 
 
-}
-
-private fun refreshFeedIfConnected(
-    context: Context,
-    viewModel: AuthorsProfileViewModel
-) {
-    if (ConnectivityUtil.isConnectionOn(context)) viewModel.submitAction(
-        AuthorsProfileIntents.RefreshScreen
-    )
-    else SnackbarManager.showMessage(
-        StringResourcesUtil.getStringValueOrNull(context, "couldn't refresh") ?: ""
-    )
 }
 
 @Composable

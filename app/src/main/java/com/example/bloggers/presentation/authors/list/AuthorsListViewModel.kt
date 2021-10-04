@@ -38,25 +38,16 @@ class AuthorsListViewModel
 
         pendingActions
             .collect { action ->
-                when (action) {
-                    is AuthorsListIntents.RetrieveAuthors -> getAuthors(
-                        action.page,
-                        action.isConnected
-                    )
-                     AuthorsListIntents.RefreshScreen -> refreshState()
-                }
-            }
-    }
-
-    private fun refreshState() {
-         viewModelScope.launch {
-            setState {
-                AuthorsListState(
-                    authors = mutableListOf(),
-                    page = 1
-                )
+            when (action) {
+                is AuthorsListIntents.RetrieveAuthors -> getAuthors(action.page , action.isConnected)
+                is  AuthorsListIntents.RefreshScreen -> refreshState(action.isConnected)
             }
         }
+    }
+
+    private fun refreshState(isConnected: Boolean) {
+       if (isConnected) viewModelScope.launch { setState { AuthorsListState(authors = mutableListOf() , page = 1) } }
+        else  viewModelScope.launch { setState { AuthorsListState(error = "couldn't refresh") } }
     }
 
     fun submitAction(action: AuthorsListIntents) {

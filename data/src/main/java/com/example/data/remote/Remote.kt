@@ -1,7 +1,6 @@
 package com.example.data.remote
 
 
-import com.example.bloggers.domain.data.Result
 import com.example.data.entities.Author
 import com.example.data.entities.Post
 import retrofit2.http.GET

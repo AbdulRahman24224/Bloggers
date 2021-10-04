@@ -88,22 +88,12 @@ fun AuthorsListScreen(
                 )
         },
         onRefresh = {
-            refreshFeedIfConnected(context, viewModel)
+            viewModel.submitAction(AuthorsListIntents.RefreshScreen(isConnectionOn(context)))
         },
         modifier
     )
 }
 
-
-private fun refreshFeedIfConnected(
-    context: Context,
-    viewModel: AuthorsListViewModel
-) {
-    if (isConnectionOn(context)) viewModel.submitAction(AuthorsListIntents.RefreshScreen)
-    else SnackbarManager.showMessage(
-        getStringValueOrNull(context, "couldn't refresh") ?: ""
-    )
-}
 
 @ExperimentalFoundationApi
 @Composable
