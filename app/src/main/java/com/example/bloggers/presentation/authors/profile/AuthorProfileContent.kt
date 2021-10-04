@@ -81,7 +81,7 @@ fun AuthorProfileScreen(
             viewModel.submitAction(
                 AuthorsProfileIntents.RetrieveAuthorData(
                     authorId.toInt(),
-                    ConnectivityUtil.isConnectionOn(context)
+                    isConnectionOn(context)
                 )
             )
         })
@@ -106,7 +106,7 @@ fun AuthorProfileScreen(
                             )
                     })
 
-                AuthorCard(author){
+                AuthorCard(author) {
                     val uri: String = java.lang.String.format(
                         Locale.ENGLISH,
                         "geo:%f,%f",
@@ -120,15 +120,18 @@ fun AuthorProfileScreen(
                 Row() {
                     BackButton(modifier = Modifier.weight(1f)) { upPress.invoke() }
                     Spacer(modifier = Modifier.weight(4f))
-                    RefreshButton (modifier = Modifier.weight(1f)){
+                    RefreshButton(modifier = Modifier.weight(1f)) {
 
-                   viewModel.submitAction(
-                       AuthorsProfileIntents.RefreshScreen(isConnectionOn(context))) }
+                        viewModel.submitAction(
+                            AuthorsProfileIntents.RefreshScreen(isConnectionOn(context))
+                        )
+                    }
                 }
 
                 if (error.isNotEmpty()) {
                     SnackbarManager.showMessage(
-                        StringResourcesUtil.getStringValueOrNull(LocalContext.current, error) ?: error
+                        StringResourcesUtil.getStringValueOrNull(LocalContext.current, error)
+                            ?: error
                     )
                     error = ""
                 }
@@ -143,7 +146,7 @@ fun AuthorProfileScreen(
 }
 
 @Composable
-private fun AuthorCard(author: Author , onAddressClicked: (Address) -> Unit) {
+private fun AuthorCard(author: Author, onAddressClicked: (Address) -> Unit) {
     Surface(
         color = AppTheme.colors.onSecondary,
         shape = RoundedCornerShape(bottomStart = 60.dp, bottomEnd = 60.dp),
@@ -207,13 +210,12 @@ private fun AuthorCard(author: Author , onAddressClicked: (Address) -> Unit) {
 
                     IconButton(
 
-                        onClick = { onAddressClicked.invoke(author.address)}
-                        ,
+                        onClick = { onAddressClicked.invoke(author.address) },
                         modifier = Modifier
                             .size(40.dp)
                             .padding(horizontal = 8.dp),
 
-                    ) {
+                        ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             tint = AppTheme.colors.primary,

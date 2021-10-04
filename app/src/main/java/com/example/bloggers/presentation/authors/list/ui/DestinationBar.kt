@@ -1,4 +1,3 @@
-
 package com.example.bloggers.presentation.authors.list.ui
 
 import androidx.compose.foundation.layout.Column

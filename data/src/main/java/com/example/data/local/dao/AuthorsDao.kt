@@ -11,10 +11,10 @@ import com.example.data.entities.Post
 interface AuthorsDao {
 
     @Query("  select * from Author Where page = :pageNumber   ")
-   suspend fun retrieveAuthorsByPage(pageNumber: Int): MutableList<Author>
+    suspend fun retrieveAuthorsByPage(pageNumber: Int): MutableList<Author>
 
     @Query("  select * from Author Where id = :authorId   ")
-   suspend fun retrieveAuthorById(authorId: Int): MutableList<Author>
+    suspend fun retrieveAuthorById(authorId: Int): MutableList<Author>
 
     @Query("  select count(*) from Author ")
     suspend fun retrieveAuthorsCount(): Int
@@ -26,10 +26,10 @@ interface AuthorsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @JvmSuppressWildcards
-   suspend fun insertAuthorPosts(authors: List<Post?>)
+    suspend fun insertAuthorPosts(authors: List<Post?>)
 
     @Query("  select * from Post Where page = :pageNumber  and authorId = :authorId  ")
-    suspend fun retrieveAuthorPostsByPage(authorId: Int ,pageNumber: Int): MutableList<Post>
+    suspend fun retrieveAuthorPostsByPage(authorId: Int, pageNumber: Int): MutableList<Post>
 
 
     @Query("DELETE FROM Author ")

@@ -12,23 +12,26 @@ class RetrieveAuthorsUseCase
     private val repository: AuthorsRepository
 ) {
 
-   operator fun invoke(page: Int, isConnected: Boolean): Flow<AuthorsListState> =
+    operator fun invoke(page: Int, isConnected: Boolean): Flow<AuthorsListState> =
         flow<AuthorsListState> {
 
             //choosing source of data based on network state and existence of cached data
-          emit(
-              when{
-                  isConnected -> retrieveFromServer(page)
-                  (!(isConnected.not() and repository.isDBEmpty())) -> retrieveFromDatabase(page)
-                  else ->AuthorsListState(status = "false", error = "Couldn't retrieve any authors")
-              }
-          )
+            emit(
+                when {
+                    isConnected -> retrieveFromServer(page)
+                    (!(isConnected.not() and repository.isDBEmpty())) -> retrieveFromDatabase(page)
+                    else -> AuthorsListState(
+                        status = "false",
+                        error = "Couldn't retrieve any authors"
+                    )
+                }
+            )
 
         }
 
     private suspend fun retrieveFromServer(
         page: Int
-    ) : AuthorsListState{
+    ): AuthorsListState {
         // clear old data if New data will be retrieved from server
         if (page == 1) repository.deleteAllAuthors()
 
@@ -39,7 +42,7 @@ class RetrieveAuthorsUseCase
                     it.forEach { it.page = page }
                     repository.insertAuthors(it)
                     AuthorsListState(authors = it.toMutableList())
-                }?: AuthorsListState()
+                } ?: AuthorsListState()
             }
             is Result.Failure -> {
                 //todo get rid of this "false"
@@ -52,6 +55,6 @@ class RetrieveAuthorsUseCase
 
     private suspend fun retrieveFromDatabase(
         page: Int
-    )  = AuthorsListState(authors = repository.getAuthorsFromDatabase(page))
+    ) = AuthorsListState(authors = repository.getAuthorsFromDatabase(page))
 
 }

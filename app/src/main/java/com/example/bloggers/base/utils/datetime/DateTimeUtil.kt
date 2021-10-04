@@ -13,7 +13,7 @@ object DateTimeUtil {
             val serverFormat = SimpleDateFormat("yyyy-MM-dd")
             val myFormat = SimpleDateFormat("dd MMM yyyy ")
 
-            val date = serverFormat.parse(dateTime)?: Date()
+            val date = serverFormat.parse(dateTime) ?: Date()
             myFormat.format(date).toString()
 
         } catch (e: Exception) {

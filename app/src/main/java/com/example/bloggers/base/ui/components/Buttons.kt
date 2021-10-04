@@ -18,7 +18,7 @@ import com.example.bloggers.base.ui.theme.Neutral8
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun BackButton(modifier: Modifier = Modifier , upPress: () -> Unit) {
+fun BackButton(modifier: Modifier = Modifier, upPress: () -> Unit) {
     IconButton(
         onClick = upPress,
         modifier = modifier
@@ -39,7 +39,7 @@ fun BackButton(modifier: Modifier = Modifier , upPress: () -> Unit) {
 }
 
 @Composable
-fun RefreshButton(modifier: Modifier = Modifier , upPress: () -> Unit) {
+fun RefreshButton(modifier: Modifier = Modifier, upPress: () -> Unit) {
     IconButton(
         onClick = upPress,
         modifier = modifier

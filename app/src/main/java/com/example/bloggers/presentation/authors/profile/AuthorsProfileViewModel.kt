@@ -50,18 +50,23 @@ class AuthorsProfileViewModel
                         action.isConnected
                     )
 
-                    is  AuthorsProfileIntents.RefreshScreen -> refreshState(action.isConnected)
+                    is AuthorsProfileIntents.RefreshScreen -> refreshState(action.isConnected)
                 }
             }
     }
 
 
-
-
-private fun refreshState(isConnected: Boolean) {
-    if (isConnected) viewModelScope.launch { setState { AuthorsProfileState(posts = mutableListOf() , page = 1) } }
-    else  viewModelScope.launch { setState { AuthorsProfileState(error = "couldn't refresh") } }
-}
+    private fun refreshState(isConnected: Boolean) {
+        if (isConnected) viewModelScope.launch {
+            setState {
+                AuthorsProfileState(
+                    posts = mutableListOf(),
+                    page = 1
+                )
+            }
+        }
+        else viewModelScope.launch { setState { AuthorsProfileState(error = "couldn't refresh") } }
+    }
 
     fun submitAction(action: AuthorsProfileIntents) {
         viewModelScope.launch {

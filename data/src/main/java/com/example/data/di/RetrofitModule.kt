@@ -1,8 +1,8 @@
 package com.example.data.di
 
 
-import com.example.data.remote.MyCallAdapterFactory
 import com.example.data.remote.AuthorsApis
+import com.example.data.remote.MyCallAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ihsanbal.logging.Level
@@ -37,7 +37,7 @@ object RetrofitModule {
     @Provides
     fun provideOkHttpClient(logging: LoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-              .addInterceptor(logging)
+            .addInterceptor(logging)
             .connectTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

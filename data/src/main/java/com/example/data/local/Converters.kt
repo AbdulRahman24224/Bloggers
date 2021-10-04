@@ -7,8 +7,8 @@ import com.google.gson.Gson
 class Converters {
 
     @TypeConverter
-    fun fromStringToAddress(json: String) : Address{
-    return  Gson().fromJson(json  , Address::class.java)
+    fun fromStringToAddress(json: String): Address {
+        return Gson().fromJson(json, Address::class.java)
     }
 
     @TypeConverter

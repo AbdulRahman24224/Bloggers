@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.example.data.entities.Author
 import com.example.data.entities.BaseState
 import kotlinx.parcelize.Parcelize
-import java.io.Serializable
 
 
 @Parcelize

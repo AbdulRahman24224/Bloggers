@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class RetrieveSingleAuthorUseCase
-@Inject constructor(private val repository: AuthorsRepository)  {
+@Inject constructor(private val repository: AuthorsRepository) {
 
-        operator fun invoke(authorId :Int): Flow<Author?> =
-            flow { emit( getAuthor(authorId) ) }
+    operator fun invoke(authorId: Int): Flow<Author?> =
+        flow { emit(getAuthor(authorId)) }
 
     private suspend fun getAuthor(authorId: Int) = repository.getAuthorById(authorId).firstOrNull()
 }

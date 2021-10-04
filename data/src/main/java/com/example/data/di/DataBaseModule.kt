@@ -24,7 +24,7 @@ object DataBaseModule {
     @Singleton
     @Provides
     fun provideAppDatabase(@ApplicationContext app: Context): AppDatabase {
-       return Room.databaseBuilder(
+        return Room.databaseBuilder(
             app,
             AppDatabase::class.java, "database"
         ).fallbackToDestructiveMigration()
@@ -33,12 +33,12 @@ object DataBaseModule {
 
     @Singleton
     @Provides
-    fun provideAuthorsDao(db: AppDatabase) : com.example.data.local.dao.AuthorsDao = db.authorsDao
+    fun provideAuthorsDao(db: AppDatabase): com.example.data.local.dao.AuthorsDao = db.authorsDao
 
 }
 
 @Database(
-    entities = [Author::class , Post::class], version = 3, exportSchema = false
+    entities = [Author::class, Post::class], version = 3, exportSchema = false
 )
 
 @TypeConverters(Converters::class)

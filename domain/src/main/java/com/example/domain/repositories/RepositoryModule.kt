@@ -9,14 +9,13 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
-
 @Module
 @InstallIn(SingletonComponent::class)
- object RepositoryModule {
+object RepositoryModule {
 
     @Singleton
     @Provides
-     private fun provideArticlesRepository(
+    private fun provideArticlesRepository(
         articleApi: AuthorsApis,
         database: AppDatabase,
     ): AuthorsRepository {

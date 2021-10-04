@@ -13,35 +13,41 @@ class RetrieveAuthorPostsUseCase
     private val repository: AuthorsRepository
 ) {
 
-    operator fun invoke(  authorId :Int , page: Int,isConnected: Boolean): Flow<AuthorsProfileState> =
+    operator fun invoke(authorId: Int, page: Int, isConnected: Boolean): Flow<AuthorsProfileState> =
         flow<AuthorsProfileState> {
 
             //choosing source of data based on network state and existence of cached data
-          emit(
-              when{
-                  isConnected -> retrieveFromServer(page , authorId)
-                  (!(isConnected.not() and repository.isDBEmpty())) -> retrieveFromDatabase(page , authorId)
-                  else ->AuthorsProfileState(status = "false", error = "Couldn't retrieve author data")
-              }
-          )
+            emit(
+                when {
+                    isConnected -> retrieveFromServer(page, authorId)
+                    (!(isConnected.not() and repository.isDBEmpty())) -> retrieveFromDatabase(
+                        page,
+                        authorId
+                    )
+                    else -> AuthorsProfileState(
+                        status = "false",
+                        error = "Couldn't retrieve author data"
+                    )
+                }
+            )
 
         }
 
     private suspend fun retrieveFromServer(
-        page: Int ,
+        page: Int,
         authorId: Int
-    ) : AuthorsProfileState{
+    ): AuthorsProfileState {
         // clear old data if New data will be retrieved from server
         if (page == 1) repository.deleteAuthorPosts(authorId)
 
-        return when (val authorsResponse = repository.getAuthorPostsFromServer(authorId ,page)) {
+        return when (val authorsResponse = repository.getAuthorPostsFromServer(authorId, page)) {
             is Result.Success -> {
 
                 authorsResponse.data?.let {
                     it.forEach { it.page = page }
                     repository.insertAuthorPosts(it)
                     AuthorsProfileState(posts = it.toMutableList())
-                }?:AuthorsProfileState()
+                } ?: AuthorsProfileState()
             }
             is Result.Failure -> {
                 AuthorsProfileState(status = "false", error = "Request failed")
@@ -52,8 +58,8 @@ class RetrieveAuthorPostsUseCase
     }
 
     private suspend fun retrieveFromDatabase(
-        page: Int ,
+        page: Int,
         authorId: Int
-    )  = AuthorsProfileState(posts = repository.getAuthorPostsFromDatabase(authorId ,page))
+    ) = AuthorsProfileState(posts = repository.getAuthorPostsFromDatabase(authorId, page))
 
 }

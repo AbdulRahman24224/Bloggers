@@ -38,16 +38,26 @@ class AuthorsListViewModel
 
         pendingActions
             .collect { action ->
-            when (action) {
-                is AuthorsListIntents.RetrieveAuthors -> getAuthors(action.page , action.isConnected)
-                is  AuthorsListIntents.RefreshScreen -> refreshState(action.isConnected)
+                when (action) {
+                    is AuthorsListIntents.RetrieveAuthors -> getAuthors(
+                        action.page,
+                        action.isConnected
+                    )
+                    is AuthorsListIntents.RefreshScreen -> refreshState(action.isConnected)
+                }
             }
-        }
     }
 
     private fun refreshState(isConnected: Boolean) {
-       if (isConnected) viewModelScope.launch { setState { AuthorsListState(authors = mutableListOf() , page = 1) } }
-        else  viewModelScope.launch { setState { AuthorsListState(error = "couldn't refresh") } }
+        if (isConnected) viewModelScope.launch {
+            setState {
+                AuthorsListState(
+                    authors = mutableListOf(),
+                    page = 1
+                )
+            }
+        }
+        else viewModelScope.launch { setState { AuthorsListState(error = "couldn't refresh") } }
     }
 
     fun submitAction(action: AuthorsListIntents) {
@@ -81,7 +91,8 @@ class AuthorsListViewModel
                             else if (showingCached) "showing cached"
                             else newState.error
 
-                            copy(hasMoreData = hasMoreData,
+                            copy(
+                                hasMoreData = hasMoreData,
                                 authors =
                                 state.value.authors.let {
                                     it.addAll(newState.authors)
