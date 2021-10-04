@@ -1,6 +1,6 @@
 package com.example.domain.usecases.authors
 
-import com.example.bloggers.domain.data.Result
+import com.example.data.remote.Result
 import com.example.domain.repositories.AuthorsRepository
 import com.example.domain.usecases.authors.states.AuthorsProfileState
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class RetrieveAuthorPostsUseCase
 @Inject constructor(
-     val repository: AuthorsRepository
+    private val repository: AuthorsRepository
 ) {
 
     operator fun invoke(  authorId :Int , page: Int,isConnected: Boolean): Flow<AuthorsProfileState> =
@@ -44,7 +44,6 @@ class RetrieveAuthorPostsUseCase
                 }?:AuthorsProfileState()
             }
             is Result.Failure -> {
-                //todo get rid of this "false"
                 AuthorsProfileState(status = "false", error = "Request failed")
             }
             else ->
@@ -55,11 +54,6 @@ class RetrieveAuthorPostsUseCase
     private suspend fun retrieveFromDatabase(
         page: Int ,
         authorId: Int
-    )  = repository.getAuthorPostsFromDatabase(authorId ,page)
-        .let {
-          //  if (page == 1) "This is Offline Data , Please Check your Internet" + " Connection and Refresh to get Latest Data"
-            // todo if upove condition add snack value to state and emit else null
-            AuthorsProfileState(posts = it)
-        }
+    )  = AuthorsProfileState(posts = repository.getAuthorPostsFromDatabase(authorId ,page))
 
 }

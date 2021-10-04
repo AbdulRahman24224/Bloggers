@@ -23,9 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.bloggers.base.ui.theme.AppTheme
 
-/**
- * Wrap Material [androidx.compose.material.Scaffold] and set [JetsnackTheme] colors.
- */
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppScaffold(

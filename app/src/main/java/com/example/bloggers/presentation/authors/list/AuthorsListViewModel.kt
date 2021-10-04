@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthorsListViewModel
 @Inject constructor(
-    private val retrieveAuthorsUseCase : RetrieveAuthorsUseCase,
+    private val retrieveAuthorsUseCase: RetrieveAuthorsUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher
 
 ) : BaseViewModel<AuthorsListState>(
@@ -38,8 +38,23 @@ class AuthorsListViewModel
 
         pendingActions
             .collect { action ->
-            when (action) {
-                is AuthorsListIntents.RetrieveAuthors -> getAuthors(action.page , action.isConnected)
+                when (action) {
+                    is AuthorsListIntents.RetrieveAuthors -> getAuthors(
+                        action.page,
+                        action.isConnected
+                    )
+                     AuthorsListIntents.RefreshScreen -> refreshState()
+                }
+            }
+    }
+
+    private fun refreshState() {
+         viewModelScope.launch {
+            setState {
+                AuthorsListState(
+                    authors = mutableListOf(),
+                    page = 1
+                )
             }
         }
     }
@@ -50,28 +65,39 @@ class AuthorsListViewModel
         }
     }
 
-    private fun getAuthors(page: Int , isConnected : Boolean) {
-        retrieveAuthorsUseCase(page  , isConnected )
+    private fun getAuthors(page: Int, isConnected: Boolean) {
+        retrieveAuthorsUseCase(page, isConnected)
             .runAndCatch(
                 SendSingleItemListener { b ->
-                viewModelScope.launch {
-                    setState {
-                        copy(
-                            isLoading = b
-                        )
+                    viewModelScope.launch {
+                        setState {
+                            copy(
+                                isLoading = b
+                            )
+                        }
                     }
-                }
-            },
+                },
                 SendSingleItemListener
                 { newState ->
                     viewModelScope.launch {
                         setState {
-                            copy( hasMoreData = newState.authors.isNotEmpty()
-                             ,   authors =
-                            state.authors.let {
-                                it.addAll(newState.authors)
-                                it
-                            })
+                            val hasMoreData = newState.authors.isNotEmpty()
+                            val showingCached =
+                                isConnected.not() and (page == 1) and newState.authors.isNotEmpty()
+
+                            // todo  separate messsage from errors in basestate
+                            newState.error = if (hasMoreData.not()) "no more data"
+                            else if (showingCached) "showing cached"
+                            else newState.error
+
+                            copy(hasMoreData = hasMoreData,
+                                authors =
+                                state.value.authors.let {
+                                    it.addAll(newState.authors)
+                                    it
+                                },
+                                error = if (state.value.error == newState.error) "" else newState.error
+                            )
                         }
                     }
                 }

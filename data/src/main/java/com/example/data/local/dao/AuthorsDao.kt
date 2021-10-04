@@ -23,7 +23,7 @@ interface AuthorsDao {
     @JvmSuppressWildcards
     fun insertAuthors(authors: List<Author?>)
 
-    // todo should this be in a separate dao
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @JvmSuppressWildcards
    suspend fun insertAuthorPosts(authors: List<Post?>)

@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.bloggers.base.ui.theme.AppTheme
 
 private const val DividerAlpha = 0.12f
+
 @Composable
 fun AppDivider(
     modifier: Modifier = Modifier,

@@ -1,4 +1,4 @@
-package com.example.bloggers.domain.data
+package com.example.data.remote
 
 import okhttp3.Request
 import okio.Timeout
@@ -22,6 +22,12 @@ abstract class CallDelegate<TIn, TOut>(
 
     abstract fun enqueueImpl(callback: Callback<TOut>)
     abstract fun cloneImpl(): Call<TOut>
+}
+
+sealed class Result<out T> {
+    data class Success<T>(val data: T?) : Result<T>()
+    data class Failure(val statusCode: Int?) : Result<Nothing>()
+    object NetworkError : Result<Nothing>()
 }
 
 class ResultCall<T>(proxy: Call<T>) : CallDelegate<T, Result<T>>(proxy) {
@@ -71,8 +77,10 @@ class MyCallAdapterFactory : CallAdapter.Factory() {
         annotations: Array<Annotation>,
         retrofit: Retrofit
     ) = when (getRawType(returnType)) {
+
         Call::class.java -> {
             val callType = getParameterUpperBound(0, returnType as ParameterizedType)
+
             when (getRawType(callType)) {
                 Result::class.java -> {
                     val resultType = getParameterUpperBound(0, callType as ParameterizedType)

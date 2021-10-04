@@ -1,12 +1,11 @@
 package com.example.domain.usecases.authors
 
-import com.example.bloggers.domain.data.Result
+import com.example.data.remote.Result
 import com.example.domain.repositories.AuthorsRepository
 import com.example.domain.usecases.authors.states.AuthorsListState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-
 
 class RetrieveAuthorsUseCase
 @Inject constructor(
@@ -53,11 +52,6 @@ class RetrieveAuthorsUseCase
 
     private suspend fun retrieveFromDatabase(
         page: Int
-    )  = repository.getAuthorsFromDatabase(page)
-        .let {
-          //  if (page == 1) "This is Offline Data , Please Check your Internet" + " Connection and Refresh to get Latest Data"
-            // todo if upove condition add snack value to state and emit else null
-            AuthorsListState(authors = it)
-        }
+    )  = AuthorsListState(authors = repository.getAuthorsFromDatabase(page))
 
 }

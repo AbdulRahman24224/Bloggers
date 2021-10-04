@@ -29,27 +29,32 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.bloggers.base.ui.components.AppCard
 import com.example.bloggers.base.ui.components.AppSurface
 import com.example.bloggers.base.ui.components.RoundImage
 import com.example.bloggers.base.ui.theme.AppTheme
+import com.example.bloggers.base.utils.SnackbarManager
 import com.example.bloggers.base.utils.network.ConnectivityUtil.isConnectionOn
+import com.example.bloggers.base.utils.resources.StringResourcesUtil.getStringValueOrNull
 import com.example.bloggers.base.utils.ui.isScrolledToEnd
-import com.example.bloggers.base.utils.ui.sH
+import com.example.bloggers.base.utils.ui.sV
 import com.example.bloggers.presentation.authors.list.AuthorsListIntents
 import com.example.bloggers.presentation.authors.list.AuthorsListViewModel
 import com.example.data.entities.Author
 import com.example.data.remote.Authors
 import com.example.domain.usecases.authors.states.AuthorsListState
 
+
+val AppBarHeight = 56.dp
 
 @ExperimentalFoundationApi
 @Composable
@@ -58,15 +63,13 @@ fun AuthorsListScreen(
     onAuthorClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state = viewModel.liveData.observeAsState(AuthorsListState())
+    val state = viewModel.state.collectAsState()
     val viewState by rememberSaveable { state }
-
+    val context = LocalContext.current
     // specificaly checking is needed
-    if (viewState == null || viewState.authors.isNullOrEmpty())
-    {
-        val context = LocalContext.current
+    if (viewState == null || viewState.authors.isNullOrEmpty()) {
         LaunchedEffect(key1 = Unit, block = {
-            viewModel.submitAction(AuthorsListIntents.RetrieveAuthors(1 , isConnectionOn(context ) ))
+            viewModel.submitAction(AuthorsListIntents.RetrieveAuthors(1, isConnectionOn(context)))
         })
     }
 
@@ -74,16 +77,31 @@ fun AuthorsListScreen(
     AuthorsListContent(
         viewState,
         onAuthorClick,
-        onRetrieveMore = { context ->
+
+        onRetrieveMore = { hoistedContext ->
             if (viewState.isLoading.not() && viewState.hasMoreData)
-            viewModel.submitAction(
-                AuthorsListIntents.RetrieveAuthors(
-                    ++viewState.page ,
-                    isConnectionOn(context )))
-            println(viewState.page)
-        }
-        ,
+                viewModel.submitAction(
+                    AuthorsListIntents.RetrieveAuthors(
+                        ++viewState.page,
+                        isConnectionOn(hoistedContext)
+                    )
+                )
+        },
+        onRefresh = {
+            refreshFeedIfConnected(context, viewModel)
+        },
         modifier
+    )
+}
+
+
+private fun refreshFeedIfConnected(
+    context: Context,
+    viewModel: AuthorsListViewModel
+) {
+    if (isConnectionOn(context)) viewModel.submitAction(AuthorsListIntents.RefreshScreen)
+    else SnackbarManager.showMessage(
+        getStringValueOrNull(context, "couldn't refresh") ?: ""
     )
 }
 
@@ -93,13 +111,27 @@ private fun AuthorsListContent(
     viewstate: AuthorsListState,
     onAuthorClick: (Long) -> Unit,
     onRetrieveMore: (Context) -> Unit,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     AppSurface(modifier = modifier.fillMaxSize()) {
         Box {
-            AuthorsList(viewstate.authors, onAuthorClick , onRetrieveMore )
-            DestinationBar()
+            viewstate.apply {
+
+                AuthorsList(viewstate.authors, onAuthorClick, onRetrieveMore)
+                DestinationBar() {
+                    onRefresh.invoke()
+                }
+
+                if (error.isNotEmpty()) {
+                    SnackbarManager.showMessage(
+                        getStringValueOrNull(LocalContext.current, error) ?: error
+                    )
+                    error = ""
+                }
+            }
+
         }
     }
 }
@@ -113,23 +145,24 @@ private fun AuthorsList(
     onRetrieveMore: (Context) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier
-        .background(AppTheme.colors.background)
-        .fillMaxWidth()) {
+    Box(
+        modifier
+            .padding(top = AppBarHeight)
+            .background(AppTheme.colors.background)
+            .fillMaxWidth()
+    ) {
 
         val listState = rememberLazyListState()
         LazyVerticalGrid(
             GridCells.Fixed(2),
-             modifier,
-            listState
-           , PaddingValues(start = 24.dp, end = 24.dp)
+            modifier,
+            listState, PaddingValues(start = 12.dp, end = 12.dp)
         ) {
 
-            itemsIndexed(authors) { index, snack ->
+            itemsIndexed(authors) { _, snack ->
                 AuthorItem(
                     snack,
-                    onAuthorClick,
-                    index
+                    onAuthorClick
                 )
             }
         }
@@ -150,8 +183,6 @@ private fun AuthorsList(
 private fun AuthorItem(
     author: Author,
     onAuthorClick: (Long) -> Unit,
-    index: Int,
-
     modifier: Modifier = Modifier
 ) {
 
@@ -159,9 +190,9 @@ private fun AuthorItem(
         modifier = modifier
             .size(
                 width = 150.dp,
-                height = 280.dp
+                height = 250.dp
             )
-            .padding( 8.dp)
+            .padding(8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -174,35 +205,38 @@ private fun AuthorItem(
                     .fillMaxWidth()
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                )
+
                 RoundImage(
                     imageUrl = author.avatarUrl,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(120.dp)
-                        .align(Alignment.BottomCenter)
+                        .size(140.dp)
+                        .padding(4.dp)
+                        .align(Alignment.Center)
                 )
             }
-            sH(x = 8)
+
             Text(
                 text = author.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.body1.merge(TextStyle(fontSize = 18.sp)),
                 color = AppTheme.colors.secondary,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 8.dp)
             )
-            sH(x = 8)
+            sV(h = 8)
             Text(
-                text = author.email,
-                style = MaterialTheme.typography.body1,
-                color = AppTheme.colors.secondary,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                text = "@${author.userName}",
+                style = MaterialTheme.typography.subtitle1.merge(TextStyle(fontSize = 14.sp)),
+                color = AppTheme.colors.primary,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 8.dp)
             )
+            sV(h = 8)
+
         }
     }
 }

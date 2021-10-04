@@ -1,9 +1,7 @@
 package com.example.bloggers.presentation
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.data.entities.BaseState
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,15 +21,13 @@ abstract class BaseViewModel<S : BaseState>(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(initialState)
+    val state: StateFlow<S>
+        get() = _state
+
     private val stateMutex = Mutex()
 
-    val state: S
-        get() = _state.value
 
-    // todo :  expose state as StateFlow
-    val liveData: LiveData<S>
-        get() = _state.asLiveData()
-
+    // for unit testing
     private val statesList: MutableList<S> = mutableListOf()
 
     fun <T> Flow<T>.runAndCatch(
@@ -45,8 +41,10 @@ abstract class BaseViewModel<S : BaseState>(
 
             flow
                 .flowOn(defaultDispatcher)
-                .catch { e -> setState { this.apply {  error = e.message ?: "Exception Error" } }
-                       Log.e("Error" , e.message ?: "Exception Error") }
+                .catch { e ->
+                    setState { this.apply { error = e.message ?: "Exception Error" } }
+                    Log.e("Error", e.message ?: "Exception Error")
+                }
                 .collect { it ->
                     flowResult.sendItem(it)
                     loadingChanged.sendItem(false)
@@ -59,7 +57,6 @@ abstract class BaseViewModel<S : BaseState>(
 
         stateMutex.withLock {
             _state.value = reducer(_state.value)
-            //    Log.v("newState", state.value.toString())
             statesList.add(_state.value)
         }
 

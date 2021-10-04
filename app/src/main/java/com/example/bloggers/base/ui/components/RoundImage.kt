@@ -17,8 +17,9 @@ fun RoundImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp
+    elevation: Dp = 1.dp
 ) {
+
     AppSurface(
         color = Color.LightGray,
         elevation = elevation,
@@ -31,7 +32,8 @@ fun RoundImage(
                 data = imageUrl,
                 builder = {
                     crossfade(true)
-                    placeholder(drawableResId = R.drawable.ic_launcher_foreground) // todo : nice placeholder
+                    placeholder(drawableResId = R.drawable.ic_launcher_foreground)
+
                 }
             ),
             contentDescription = contentDescription,

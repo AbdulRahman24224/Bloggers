@@ -27,13 +27,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.bloggers.base.ui.theme.AppTheme
 
-/**
- * An alternative to [androidx.compose.material.Snackbar] utilizing
- * [com.example.jetsnack.ui.theme.JetsnackColors]
- */
 
 @Composable
-fun Snackbar(
+fun AppSnackbar(
     snackbarData: SnackbarData,
     modifier: Modifier = Modifier,
     actionOnNewLine: Boolean = false,
@@ -54,4 +50,5 @@ fun Snackbar(
         elevation = elevation
     )
 }
+
 

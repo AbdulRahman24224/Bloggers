@@ -7,7 +7,7 @@ import android.os.Build
 
 object ConnectivityUtil {
 
-    fun isConnectionOn(context: Context ): Boolean {
+    fun isConnectionOn(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

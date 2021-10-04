@@ -1,4 +1,4 @@
-package com.example.bloggers.presentation.authors.details
+package com.example.bloggers.presentation.authors.profile
 
 import androidx.lifecycle.viewModelScope
 import com.example.bloggers.base.di.DefaultDispatcher
@@ -20,8 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthorsProfileViewModel
 @Inject constructor(
-    private val retrieveAuthors : RetrieveAuthorPostsUseCase ,
-    private val retrieveSingleAuthor : RetrieveSingleAuthorUseCase ,
+    private val retrieveAuthors: RetrieveAuthorPostsUseCase,
+    private val retrieveSingleAuthor: RetrieveSingleAuthorUseCase,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher
 
 ) : BaseViewModel<AuthorsProfileState>(
@@ -39,11 +39,18 @@ class AuthorsProfileViewModel
 
         pendingActions
             .collect { action ->
-            when (action) {
-                is AuthorsProfileIntents.RetrieveAuthorData -> getCurrentAuthorData(action.authorId , action.isConnected)
-                is AuthorsProfileIntents.RetrieveAuthorPosts -> getAuthorPosts(state.author.id , action.page , action.isConnected)
+                when (action) {
+                    is AuthorsProfileIntents.RetrieveAuthorData -> getCurrentAuthorData(
+                        action.authorId,
+                        action.isConnected
+                    )
+                    is AuthorsProfileIntents.RetrieveAuthorPosts -> getAuthorPosts(
+                        state.value.author.id,
+                        action.page,
+                        action.isConnected
+                    )
+                }
             }
-        }
     }
 
     fun submitAction(action: AuthorsProfileIntents) {
@@ -52,41 +59,40 @@ class AuthorsProfileViewModel
         }
     }
 
-        private fun  getCurrentAuthorData(authorId: Int , isConnected : Boolean){
-            viewModelScope.launch {
+    private fun getCurrentAuthorData(authorId: Int, isConnected: Boolean) {
+        viewModelScope.launch {
 
-                    retrieveSingleAuthor(authorId)
-                        .runAndCatch(
-                            SendSingleItemListener {  } ,
-                            SendSingleItemListener {
-                              it?.apply { viewModelScope.launch {setState { copy(author = it) } } }
-                            }
-                        )
+            retrieveSingleAuthor(authorId)
+                .runAndCatch(
+                    SendSingleItemListener { },
+                    SendSingleItemListener {
+                        it?.apply { viewModelScope.launch { setState { copy(author = it) } } }
+                    }
+                )
 
-                getAuthorPosts(authorId , 1 ,isConnected )
-            }
+            getAuthorPosts(authorId, 1, isConnected)
         }
-    
-    private fun getAuthorPosts(authorId: Int , page: Int , isConnected : Boolean) {
-        retrieveAuthors(authorId  , page  , isConnected )
+    }
+
+    private fun getAuthorPosts(authorId: Int, page: Int, isConnected: Boolean) {
+        retrieveAuthors(authorId, page, isConnected)
             .runAndCatch(
 
                 SendSingleItemListener { b ->
-                viewModelScope.launch {
-                    setState {
-                        copy(
-                            isLoading = b
-                        )
+                    viewModelScope.launch {
+                        setState {
+                            copy(
+                                isLoading = b
+                            )
+                        }
                     }
-                }
-            },
+                },
                 SendSingleItemListener
                 { newState ->
                     viewModelScope.launch {
                         setState {
-                            copy( hasMoreData = newState.posts.isNotEmpty()
-                             ,   posts = 
-                            state.posts.let {
+                            copy(hasMoreData = newState.posts.isNotEmpty(), posts =
+                            state.value.posts.let {
                                 it.addAll(newState.posts)
                                 it
                             })

@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.data.entities.Author
 import com.example.data.entities.Post
+import com.example.data.local.Converters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,8 +38,10 @@ object DataBaseModule {
 }
 
 @Database(
-    entities = [Author::class , Post::class], version = 2, exportSchema = false
+    entities = [Author::class , Post::class], version = 3, exportSchema = false
 )
+
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract val authorsDao: com.example.data.local.dao.AuthorsDao
 }

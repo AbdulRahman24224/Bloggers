@@ -1,19 +1,3 @@
-/*
- * Copyright 2021 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.bloggers.base.ui
 
 import android.content.res.Resources
@@ -68,18 +52,19 @@ class AppStateHolder(
 
     init {
         coroutineScope.launch {
-            snackbarManager.messages.collect { currentMessages ->
-                if (currentMessages.isNotEmpty()) {
-                    val message = currentMessages[0]
-                    val text = resources.getText(message.messageId)
+            snackbarManager.messages
+                .collect { currentMessages ->
+                    if (currentMessages.isNotEmpty()) {
+                        val newMessage = currentMessages[0]
+                        val text = newMessage.message
 
-                    // Display the snackbar on the screen. `showSnackbar` is a function
-                    // that suspends until the snackbar disappears from the screen
-                    scaffoldState.snackbarHostState.showSnackbar(text.toString())
-                    // Once the snackbar is gone or dismissed, notify the SnackbarManager
-                    snackbarManager.setMessageShown(message.id)
+                        // Display the snackbar on the screen. `showSnackbar` is a function
+                        // that suspends until the snackbar disappears from the screen
+                        scaffoldState.snackbarHostState.showSnackbar(text)
+                        // Once the snackbar is gone or dismissed, notify the SnackbarManager
+                        snackbarManager.setMessageShown(newMessage.id)
+                    }
                 }
-            }
         }
     }
 

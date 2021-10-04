@@ -1,12 +1,14 @@
 package com.example.bloggers.base.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.example.bloggers.presentation.authors.details.AuthorProfile
 import com.example.bloggers.presentation.authors.list.ui.AuthorsListScreen
+import com.example.bloggers.presentation.authors.profile.AuthorProfileScreen
 
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.AppNavGraph(
     onAuthorSelected: (Long, NavBackStackEntry) -> Unit,
@@ -17,9 +19,11 @@ fun NavGraphBuilder.AppNavGraph(
         startDestination = MainDestinations.AUTHOR_LIST_ROUTE
     ) {
         composable(MainDestinations.AUTHOR_LIST_ROUTE) {
+
             AuthorsListScreen(onAuthorClick = { id ->
-                onAuthorSelected.invoke(id , it)
-            } )
+                onAuthorSelected.invoke(id, it)
+            })
+
         }
     }
     composable(
@@ -29,6 +33,6 @@ fun NavGraphBuilder.AppNavGraph(
         val arguments = requireNotNull(backStackEntry.arguments)
         val authorId = arguments.getLong(MainDestinations.AUTHOR_ID_KEY)
 
-      AuthorProfile(authorId = authorId, upPress = upPress)
+        AuthorProfileScreen(authorId = authorId, upPress = upPress)
     }
 }

@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 fun sP(x: Int) = Spacer(modifier = Modifier.padding(x.dp))
 
 @Composable
-fun sH(x: Int) = Spacer(modifier = Modifier.requiredHeight(x.dp))
+fun sV(h: Int) = Spacer(modifier = Modifier.requiredHeight(h.dp))
 
 @Composable
-fun sW(x: Int) = Spacer(modifier = Modifier.requiredWidth(x.dp))
+fun sH(w: Int) = Spacer(modifier = Modifier.requiredWidth(w.dp))

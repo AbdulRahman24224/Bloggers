@@ -10,7 +10,7 @@ val graySurface = Color(0xFF2A2A2A)
 fun surfaceGradient(isDark: Boolean) =
     if (isDark) listOf(graySurface, Color.Black) else listOf(Color.White, Color.LightGray)
 
-private val Slate200 = Color(0xFF81A9B3)
+private val Slate200 = Color(0xFFD8D6D0)
 private val Slate600 = Color(0xFF4A6572)
 private val Slate800 = Color(0xFF232F34)
 
@@ -28,8 +28,8 @@ val Neutral2 = Color(0x61ffffff)
 val Neutral1 = Color(0xbdffffff)
 val Neutral0 = Color(0xffffffff)
 
-val DarkGradient = listOf<Color>( Orange500 , Neutral5)
-val LightGradient = listOf<Color>( Orange500 , Neutral0)
+val DarkGradient = listOf<Color>(Orange500, Neutral5)
+val LightGradient = listOf<Color>(Orange500, Neutral0)
 
 val LightColors = lightColors(
     primary = Slate800,
@@ -45,8 +45,8 @@ val DarkColors = darkColors(
     primary = Slate200,
     onPrimary = Color.Black,
     secondary = Orange500,
-    onSecondary = Color.Black,
-    background = Color.Black ,
+    onSecondary = Neutral0,
+    background = Color.Black,
     onBackground = graySurface
 ).withBrandedSurface()
 

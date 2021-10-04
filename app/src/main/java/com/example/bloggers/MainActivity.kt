@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
@@ -24,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,7 +33,7 @@ class MainActivity : ComponentActivity() {
             BloggersTheme {
 
                 val appStateHolder = rememberAppStateHolder()
-                // A surface container using the 'background' color from the theme
+
                 Surface(color = AppTheme.colors.background) {
 
                     AppScaffold(
@@ -43,7 +45,8 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                         scaffoldState = appStateHolder.scaffoldState
-                    ) { innerPaddingModifier ->
+                    )
+                    { innerPaddingModifier ->
 
                         NavHost(
                             navController = appStateHolder.navController,
@@ -52,7 +55,8 @@ class MainActivity : ComponentActivity() {
                         ) {
                             AppNavGraph(
                                 onAuthorSelected = appStateHolder::navigateToAuthorDetails,
-                                upPress = appStateHolder::upPress )
+                                upPress = appStateHolder::upPress
+                            )
                         }
                     }
 

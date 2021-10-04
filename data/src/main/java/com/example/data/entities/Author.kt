@@ -15,10 +15,18 @@ data class Author(
     @SerializedName("name") val name: String="",
     @SerializedName("userName") val userName: String="",
     @SerializedName("email") val email: String="",
-    @SerializedName("avatarUrl") val avatarUrl: String="" ,
+    @SerializedName("avatarUrl") val avatarUrl: String="",
+    @SerializedName("address") val address: Address= Address(),
+
     var page: Int= 1
 ) : Parcelable
 
+
+@Parcelize
+data class Address(
+    @SerializedName("latitude") val latitude: Double=0.0,
+    @SerializedName("longitude") val longitude: Double=0.0,
+) :Parcelable
 
 @Entity
 @Parcelize

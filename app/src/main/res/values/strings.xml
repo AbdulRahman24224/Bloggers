@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Bloggers</string>
-    <string name="our_authors">Our Authors</string>
+    <string name="our_authors">Top Authors</string>
+    <string name="all_showed">You are All caught up</string>
+    <string name="showing_cached">Showing Offline Data , please check your internet connection and press top refresh button to get latest </string>
+    <string name="couldnt_refresh">Couldn\'t refresh , please check your internet connection </string>
     <string name="posts">Posts</string>
     <string name="label_back">back</string>
 </resources>
