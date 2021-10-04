@@ -10,6 +10,8 @@ object StringResourcesUtil {
             "no more data" -> context.resources.getString(R.string.all_showed)
             "showing cached" -> context.resources.getString(R.string.showing_cached)
             "couldn't refresh" -> context.resources.getString(R.string.couldnt_refresh)
+            "offline" -> context.resources.getString(R.string.offline)
+            "online" -> context.resources.getString(R.string.online)
             else -> null
         }
 

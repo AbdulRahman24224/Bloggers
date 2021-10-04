@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AuthorsProfileState(
-    val hasMoreData: Boolean = true,
+    var hasMoreData: Boolean = true,
     val author: Author = Author(),
     val posts: MutableList<Post> = mutableListOf(),
     var status: String = "true",

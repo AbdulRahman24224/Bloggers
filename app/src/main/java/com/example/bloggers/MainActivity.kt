@@ -1,5 +1,8 @@
 package com.example.bloggers
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -63,6 +66,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+
     }
 }
 

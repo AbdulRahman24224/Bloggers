@@ -17,6 +17,9 @@
 package com.example.bloggers.presentation.authors.list.ui
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -52,10 +55,38 @@ import com.example.bloggers.presentation.authors.list.AuthorsListViewModel
 import com.example.data.entities.Author
 import com.example.data.remote.Authors
 import com.example.domain.usecases.authors.states.AuthorsListState
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 
 val AppBarHeight = 56.dp
 
+/*fun flowFrom(api: CallbackBasedApi): Flow<Boolean> = callbackFlow {
+    val callback = object : Callback { // Implementation of some callback interface
+        override fun onNextValue(value: T) {
+            // To avoid blocking you can configure channel capacity using
+            // either buffer(Channel.CONFLATED) or buffer(Channel.UNLIMITED) to avoid overfill
+            trySendBlocking(value)
+                .onFailure { throwable ->
+                    // Downstream has been cancelled or failed, can log here
+                }
+        }
+        override fun onApiError(cause: Throwable) {
+            cancel(CancellationException("API Error", cause))
+        }
+        override fun onCompleted() = channel.close()
+    }
+    api.register(callback)
+    *//*
+     * Suspends until either 'onCompleted'/'onApiError' from the callback is invoked
+     * or flow collector is cancelled (e.g. by 'take(1)' or because a collector's coroutine was cancelled).
+     * In both cases, callback will be properly unregistered.
+     *//*
+    awaitClose { api.unregister(callback) }
+}*/
 @ExperimentalFoundationApi
 @Composable
 fun AuthorsListScreen(
@@ -64,15 +95,19 @@ fun AuthorsListScreen(
     modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.collectAsState()
+    val netWorkState = MutableSharedFlow<Boolean>()
     val viewState by rememberSaveable { state }
     val context = LocalContext.current
+
     // specificaly checking is needed
     if (viewState == null || viewState.authors.isNullOrEmpty()) {
+
         LaunchedEffect(key1 = Unit, block = {
             viewModel.submitAction(AuthorsListIntents.RetrieveAuthors(1, isConnectionOn(context)))
         })
-    }
 
+
+    }
 
     AuthorsListContent(
         viewState,
@@ -92,8 +127,48 @@ fun AuthorsListScreen(
         },
         modifier
     )
+
 }
 
+
+fun listenToNetworkState (
+    context: Context,
+    viewstate: AuthorsListState,
+    netWorkState: MutableSharedFlow<Boolean>
+) {
+    val scope = MainScope()
+
+    //todo move to activity
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    connectivityManager?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+
+                override  fun onAvailable(network: Network) {
+                    scope.launch {  netWorkState.emit(true) }
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    scope.launch {  netWorkState.emit(false) }
+                }
+
+            })
+        }
+    }
+
+    scope.launch {
+        netWorkState.distinctUntilChanged().collect { it ->
+            val string = if (it) "online" else "offline"
+            SnackbarManager.showMessage(
+                getStringValueOrNull(context ,string) ?:""
+            )
+
+            if (it and viewstate.hasMoreData.not())  viewstate.hasMoreData= true
+        }
+    }
+
+}
 
 @ExperimentalFoundationApi
 @Composable
@@ -124,6 +199,8 @@ private fun AuthorsListContent(
 
         }
     }
+
+
 }
 
 @ExperimentalFoundationApi

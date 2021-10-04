@@ -18,7 +18,10 @@ package com.example.bloggers.presentation.authors.profile
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,7 +53,6 @@ import com.example.bloggers.base.ui.components.*
 import com.example.bloggers.base.ui.theme.AppTheme
 import com.example.bloggers.base.utils.SnackbarManager
 import com.example.bloggers.base.utils.datetime.DateTimeUtil.getDateTime
-import com.example.bloggers.base.utils.network.ConnectivityUtil
 import com.example.bloggers.base.utils.network.ConnectivityUtil.isConnectionOn
 import com.example.bloggers.base.utils.resources.StringResourcesUtil
 import com.example.bloggers.base.utils.ui.isScrolledToEnd
@@ -77,6 +79,7 @@ fun AuthorProfileScreen(
     val context = LocalContext.current
 
     if (viewState == null || viewState.posts.isNullOrEmpty()) {
+
         LaunchedEffect(key1 = Unit, block = {
             viewModel.submitAction(
                 AuthorsProfileIntents.RetrieveAuthorData(
@@ -85,6 +88,32 @@ fun AuthorProfileScreen(
                 )
             )
         })
+
+
+        //todo move to activity
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                it.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network) {
+                        //take action when network connection is gained
+                        if (viewState.hasMoreData.not())viewState.hasMoreData= true
+                        SnackbarManager.showMessage(
+                            StringResourcesUtil.getStringValueOrNull(context, "online") ?:""
+                        )
+                    }
+
+                    override fun onLost(network: Network) {
+                        super.onLost(network)
+                        SnackbarManager.showMessage(
+                            StringResourcesUtil.getStringValueOrNull(context, "offline") ?:""
+                        )
+                    }
+
+                })
+            }
+        }
+
     }
 
     AppSurface(modifier = Modifier.fillMaxSize()) {
@@ -101,7 +130,7 @@ fun AuthorProfileScreen(
                             viewModel.submitAction(
                                 AuthorsProfileIntents.RetrieveAuthorPosts(
                                     ++page,
-                                    ConnectivityUtil.isConnectionOn(context)
+                                    isConnectionOn(context)
                                 )
                             )
                     })
@@ -141,6 +170,7 @@ fun AuthorProfileScreen(
 
         }
     }
+
 
 
 }
