@@ -1,5 +1,5 @@
 # Bloggers
-A sample app that represenrts a blogging platform .
+A sample blogging platform app that represents a showcase of applying Clean Architecture and practicing the newest libraries in android .
 
 ## Project Architecture 
 The App Follows Clean Architecture for what it brings in of Modularity , Reusability and Dependencies Direction insurance .
