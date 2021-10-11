@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -136,6 +137,7 @@ fun listenToNetworkState (
     viewstate: AuthorsListState,
     netWorkState: MutableSharedFlow<Boolean>
 ) {
+    // todo Replace with callbackFlow
     val scope = MainScope()
 
     //todo move to activity
@@ -195,6 +197,13 @@ private fun AuthorsListContent(
                     )
                     error = ""
                 }
+
+                if (isLoading)
+                    LinearProgressIndicator(
+                        modifier = Modifier.padding(top = AppBarHeight),
+                        color = AppTheme.colors.secondary,
+                        backgroundColor = AppTheme.colors.onBackground
+                    )
             }
 
         }
