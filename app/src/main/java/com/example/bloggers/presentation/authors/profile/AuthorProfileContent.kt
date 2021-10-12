@@ -18,10 +18,7 @@ package com.example.bloggers.presentation.authors.profile
 
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.Network
 import android.net.Uri
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -90,7 +87,7 @@ fun AuthorProfileScreen(
         })
 
 
-        //todo move to activity
+      /*  //todo move to activity
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityManager?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -112,7 +109,7 @@ fun AuthorProfileScreen(
 
                 })
             }
-        }
+        }*/
 
     }
 
@@ -126,10 +123,10 @@ fun AuthorProfileScreen(
                     posts,
                     onRetrieveMore =
                     { context ->
-                        if (isLoading.not() && hasMoreData)
+
                             viewModel.submitAction(
                                 AuthorsProfileIntents.RetrieveAuthorPosts(
-                                    ++page,
+                                    page,
                                     isConnectionOn(context)
                                 )
                             )

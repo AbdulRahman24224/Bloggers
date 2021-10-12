@@ -96,7 +96,6 @@ fun AuthorsListScreen(
     modifier: Modifier = Modifier
 ) {
     val state = viewModel.state.collectAsState()
-    val netWorkState = MutableSharedFlow<Boolean>()
     val viewState by rememberSaveable { state }
     val context = LocalContext.current
 
@@ -107,7 +106,6 @@ fun AuthorsListScreen(
             viewModel.submitAction(AuthorsListIntents.RetrieveAuthors(1, isConnectionOn(context)))
         })
 
-
     }
 
     AuthorsListContent(
@@ -115,10 +113,9 @@ fun AuthorsListScreen(
         onAuthorClick,
 
         onRetrieveMore = { hoistedContext ->
-            if (viewState.isLoading.not() && viewState.hasMoreData)
-                viewModel.submitAction(
+            viewModel.submitAction(
                     AuthorsListIntents.RetrieveAuthors(
-                        ++viewState.page,
+                        viewState.page,
                         isConnectionOn(hoistedContext)
                     )
                 )

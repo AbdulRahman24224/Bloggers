@@ -2,6 +2,7 @@ package com.example.bloggers.presentation.authors.profile
 
 import androidx.lifecycle.viewModelScope
 import com.example.bloggers.base.di.DefaultDispatcher
+import com.example.bloggers.base.utils.coroutines.throttleFirst
 import com.example.bloggers.presentation.BaseViewModel
 import com.example.bloggers.presentation.SendSingleItemListener
 import com.example.domain.usecases.authors.RetrieveAuthorPostsUseCase
@@ -38,17 +39,24 @@ class AuthorsProfileViewModel
     private suspend fun handleIntents() {
 
         pendingActions
+            .throttleFirst(500)
             .collect { action ->
                 when (action) {
                     is AuthorsProfileIntents.RetrieveAuthorData -> getCurrentAuthorData(
                         action.authorId,
                         action.isConnected
                     )
-                    is AuthorsProfileIntents.RetrieveAuthorPosts -> getAuthorPosts(
-                        state.value.author.id,
-                        action.page,
-                        action.isConnected
-                    )
+                    is AuthorsProfileIntents.RetrieveAuthorPosts ->
+                        state.value.apply {
+                            if (isLoading.not() && hasMoreData) {
+                                getAuthorPosts(
+                                    state.value.author.id,
+                                    page++,
+                                    action.isConnected
+                                )
+                            }
+                        }
+
 
                     is AuthorsProfileIntents.RefreshScreen -> refreshState(action.isConnected)
                 }
@@ -85,7 +93,7 @@ class AuthorsProfileViewModel
                     }
                 )
 
-            getAuthorPosts(authorId, 1, isConnected)
+            getAuthorPosts(authorId, state.value.page++, isConnected)
         }
     }
 

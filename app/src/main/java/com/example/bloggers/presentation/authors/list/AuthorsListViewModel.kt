@@ -2,6 +2,7 @@ package com.example.bloggers.presentation.authors.list
 
 import androidx.lifecycle.viewModelScope
 import com.example.bloggers.base.di.DefaultDispatcher
+import com.example.bloggers.base.utils.coroutines.throttleFirst
 import com.example.bloggers.presentation.BaseViewModel
 import com.example.bloggers.presentation.SendSingleItemListener
 import com.example.domain.usecases.authors.RetrieveAuthorsUseCase
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,12 +40,20 @@ class AuthorsListViewModel
     private suspend fun handleIntents() {
 
         pendingActions
+            .throttleFirst(500)
             .collect { action ->
                 when (action) {
-                    is AuthorsListIntents.RetrieveAuthors -> getAuthors(
-                        action.page,
-                        action.isConnected
-                    )
+                    is AuthorsListIntents.RetrieveAuthors ->{
+                        state.value.apply {
+                            if (isLoading.not() && hasMoreData) {
+                                getAuthors(
+                                    page++,
+                                    action.isConnected
+                                )
+                            }
+                        }
+
+                    }
                     is AuthorsListIntents.RefreshScreen -> refreshState(action.isConnected)
                 }
             }
